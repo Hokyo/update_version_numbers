@@ -35,7 +35,7 @@ else
 fi
 
 # Current build number
-buildNumber=$(expr $(git rev-list ${branch} --count) - $(git rev-list HEAD..${branch} --count))
+buildNumber=$(expr $(git rev-list develop --count) - $(git rev-list HEAD..develop --count))
 #buildNumber=$(git log -n 1 --pretty=format:"%h")
 #buildNumber=$(git describe --tags --always --dirty)
 
