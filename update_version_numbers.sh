@@ -1,23 +1,41 @@
 #!/bin/bash
  
-# Branch definition (requires Git flow)
-developerBranch="develop"
-masterBranch="master"
+# Current branch
+branch=$(git rev-parse --abbrev-ref HEAD)
+# Current tag
+tag=$(git describe --tags $(git rev-list master --tags --max-count=1))
 
-# Most recent tag from master branch
-recentTag=$(git describe --tags $(git rev-list ${masterBranch} --tags --max-count=1))
-recentTagArr=( ${recentTag//./ } )
+# Check if in release branch within Git flow
+if [[ $branch =~ ^release\/([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then 
+  tagMajorNumber="${BASH_REMATCH[1]}"
+  tagMinorNumber="${BASH_REMATCH[2]}"
+  tagPatchNumber="${BASH_REMATCH[4]}"
+  [[ -z "$tagPatchNumber" ]] && VersionString="${tagMajorNumber}.${tagMinorNumber}" || VersionString="${tagMajorNumber}.${tagMinorNumber}.${tagPatchNumber}"
+  echo "You are currently on a release branch. Version: ${VersionString}"
 
-# Major/Minor from tag name
-tagMajorNumber="${recentTagArr[0]}"
-tagMinorNumber="${recentTagArr[1]}"
-tagPatchNumber="${recentTagArr[2]}"
+# Check if in hotfix branch within Git flow
+elif [[ $branch =~ ^hotfix\/([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+  tagMajorNumber="${BASH_REMATCH[1]}"
+  tagMinorNumber="${BASH_REMATCH[2]}"
+  tagPatchNumber="${BASH_REMATCH[4]}"
+  [[ -z "$tagPatchNumber" ]] && VersionString="${tagMajorNumber}.${tagMinorNumber}" || VersionString="${tagMajorNumber}.${tagMinorNumber}.${tagPatchNumber}"
+  echo "You are currently on an hotfix branch. Version: ${VersionString}"
 
-# Build version string
-[[ -z "$tagPatchNumber" ]] && VersionString="${tagMajorNumber}.${tagMinorNumber}" || VersionString="${tagMajorNumber}.${tagMinorNumber}.${tagPatchNumber}"
+# We are most likely on developer branch. Use tag name as version.
+elif [[ $branch =~ ^develop$ ]] && [[ $tag =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+  tagMajorNumber="${BASH_REMATCH[1]}"
+  tagMinorNumber="${BASH_REMATCH[2]}"
+  tagPatchNumber="${BASH_REMATCH[4]}"
+  [[ -z "$tagPatchNumber" ]] && VersionString="${tagMajorNumber}.${tagMinorNumber}" || VersionString="${tagMajorNumber}.${tagMinorNumber}.${tagPatchNumber}"
+  echo "You are on a developer branch. Version (from last tag name): ${VersionString}"
+
+else
+  echo "Version cannot be extracted from git. Neither tag name nor branch provides the respective version information. Are you using Git-flow or the proper semantic versioning? Make also sure that you are on a developer branch, if not on release or hotfix branch." 1>&2
+  exit 4
+fi
 
 # Current build number
-buildNumber=$(expr $(git rev-list $developerBranch --count) - $(git rev-list HEAD..$developerBranch --count))
+buildNumber=$(expr $(git rev-list ${branch} --count) - $(git rev-list HEAD..${branch} --count))
 #buildNumber=$(git log -n 1 --pretty=format:"%h")
 #buildNumber=$(git describe --tags --always --dirty)
 
