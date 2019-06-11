@@ -47,4 +47,4 @@ podspec-bump --write “1.2.3“
 5. Make the script executable via your terminal: **chmod a+x update_version_numbers.sh** 
 6. Go back to Xcode’s target settings and add a new „Run Script Phase“ to the end of our build phase
 7. Under the „Shell“ box, add the following script: **$SRCROOT/update_version_numbers.sh**
-8 Hint: Build code while being on the release or hotfix branch. This will make sure that the new or updated marketing number is being committed within that branch, instead of within the developer branch
+8. Hint: Build code while being on the release or hotfix branch. This will make sure that the new or updated marketing number is being committed within that branch, instead of within the developer branch
