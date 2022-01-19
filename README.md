@@ -50,9 +50,9 @@
 
   
   ## Make sure it is still working with SwiftUI Previews
-  Credits to [Vaseltior](https://stackoverflow.com/a/62216533/873072).
+  It may happen that the script above permanently pauses SwiftUI previews. This chapter shows a workaround. Credits to [Vaseltior](https://stackoverflow.com/a/62216533/873072).
   
-  Use following code in the 
+  Use following code in the shell input field within project's "Run Script Phase" settings.
 
   ```
   if [ $ENABLE_PREVIEWS == "NO" ]
