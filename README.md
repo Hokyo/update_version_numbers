@@ -50,6 +50,7 @@
 
   
   ## Make sure it is still working with SwiftUI Previews
+  Credits to [Vaseltior](https://stackoverflow.com/a/62216533/873072).
   
   Use following code in the 
 
